@@ -1,5 +1,5 @@
 apiVersion: apps/v1
-kind: Deployment
+kind: StatefulSet
 metadata:
   name: kafka-broker-0
 spec:
@@ -8,6 +8,7 @@ spec:
     matchLabels:
         app: kafka
         id: "0"
+  serviceName: kafka-service
   template:
     metadata:
       labels:
@@ -45,7 +46,7 @@ metadata:
   name: kafka-data-claim
 spec:
   accessModes:
-    - ReadWriteMany
+    - ReadWriteOnce
   resources:
     requests:
       storage: 5Gi
