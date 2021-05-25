@@ -3,7 +3,7 @@ kind: Deployment
 metadata:
   name: kafka-broker-0
 spec:
-  replicas: 1
+  replicas: 3
   selector:
     matchLabels:
         app: kafka
@@ -14,6 +14,7 @@ spec:
         app: kafka
         id: "0"
     spec:
+      restartPolicy: Always
       containers:
       - name: kafka
         image: wurstmeister/kafka
@@ -30,3 +31,23 @@ spec:
           value: "0"
         - name: KAFKA_CREATE_TOPICS
           value: topic:1
+        volumeMounts:
+         - name: kafka-storage
+           mountPath: /var/lib/kafka/data
+      volumes:
+        - name: kafka-storage
+          persistentVolumeClaim:
+            claimName: kafka-data-claim
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: kafka-data-claim
+spec:
+  accessModes:
+    - ReadWriteMany
+  resources:
+    requests:
+      storage: 5Gi
+
+        
